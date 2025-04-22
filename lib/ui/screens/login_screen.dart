@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_liveclass/data/models/login_model.dart';
 import 'package:task_liveclass/ui/controllers/auth_controller.dart';
-import 'package:task_liveclass/ui/screens/forgot_password_verify.dart';
+import 'package:task_liveclass/ui/screens/forgot_password_email_verify_screen.dart';
 import 'package:task_liveclass/ui/screens/main_bottom_nav.dart';
 import 'package:task_liveclass/ui/screens/register_screen.dart';
 import 'package:task_liveclass/ui/widgets/screen_background.dart';
@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
   void _onTapForgotPasswordButton(){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> const ForgotPasswordVerifyScreen(),
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> const ForgotPasswordEmailVerifyScreen(),
     ),
     );
   }
