@@ -1,12 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:task_liveclass/ui/screens/reset_password_screen.dart';
 import 'package:task_liveclass/ui/widgets/pop_up_message.dart';
 import '../../data/service/network_client.dart';
 import '../../data/utils/urls.dart';
 import '../widgets/screen_background.dart';
-import 'login_screen.dart';
 
 class ForgotPasswordOtpVerifyScreen extends StatefulWidget {
   final String email;
