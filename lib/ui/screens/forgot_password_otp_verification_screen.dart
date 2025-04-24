@@ -7,8 +7,7 @@ import '../../data/utils/urls.dart';
 import '../widgets/screen_background.dart';
 
 class ForgotPasswordOtpVerifyScreen extends StatefulWidget {
-  final String email;
-  const ForgotPasswordOtpVerifyScreen({super.key, required this.email});
+  const ForgotPasswordOtpVerifyScreen({super.key,});
 
   @override
   State<ForgotPasswordOtpVerifyScreen> createState() => _ForgotPasswordOtpVerifyScreenState();

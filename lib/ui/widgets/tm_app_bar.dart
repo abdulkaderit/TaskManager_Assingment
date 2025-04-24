@@ -1,12 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:task_liveclass/ui/controllers/auth_controller.dart';
 
-import '../screens/login_screen.dart';
-import '../screens/update_profile_screen.dart';
 class TMAppBar extends StatelessWidget implements PreferredSizeWidget{
-  const TMAppBar({
-    super.key,
-  });
+  final VoidCallback? onUpdate;
+  final bool? fromProfileScreen;
+  const TMAppBar({super.key, this.fromProfileScreen, this.onUpdate,});
 
 
 
@@ -17,26 +18,35 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget{
       backgroundColor: Colors.blueAccent,
       title: GestureDetector(
         onTap: (){
-          _onTapProfileSection(context);
+          if (fromProfileScreen ?? false) {
+            return;
+          }
+          _onTapProfileUpdate(context);
           },
         child: Row(
           children: [
             CircleAvatar(
-              radius: 22,
+              radius: 16,
+              backgroundImage:
+              shouldShowImage(AuthController.userInfoModel?.photo)
+                  ? MemoryImage(
+                base64Decode(AuthController.userInfoModel?.photo ?? ''),
+              )
+                  : null,
             ),
             const SizedBox(width: 8,),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AuthController.userModel?.fulName ??'',
+                  Text(AuthController.userInfoModel?.fulName ??'',
                     style: textTheme.bodyLarge?.copyWith(color: Colors.white),),
-                  Text(AuthController.userModel?. email ??'Unknown',
+                  Text(AuthController.userInfoModel?. email ??'Unknown',
                     style: textTheme.bodySmall?.copyWith(color: Colors.white),)
                 ],
               ),
             ),
-            IconButton(onPressed: () => _onTapLogOutButton(context),
+            IconButton(onPressed: () => _onTapLogOut(context),
                 icon: Icon(Icons.logout, color: Colors.white,))
           ],
         ),
@@ -44,20 +54,31 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget{
     );
   }
 
-  void _onTapProfileSection(BuildContext context) {
-    Navigator.push(context,
-      MaterialPageRoute(builder: (context) => const UpdateProfileScreen(),),);
-  }
-
-  Future<void> _onTapLogOutButton(BuildContext context) async {
+  Future<void> _onTapLogOut(context) async {
     await AuthController.clearUserData();
-
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => const LoginScreen(),),
-            (predicate) => false
-    );
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
+
+  void _onTapProfileUpdate(BuildContext context) {
+    Navigator.pushNamed(
+        context,
+        '/UpdateProfileScreen',
+        arguments: (){
+          // AuthController.getUserInformation();
+          onUpdate!();
+          Logger().w('Got the notifier from TMAPP Bar');
+        }
+    );
+  }
+
+  fullName({required String firstName, required String lastName}) {
+    return '$firstName $lastName';
+  }
+
+  bool shouldShowImage(String? photo) {
+    return photo != null && photo.isNotEmpty;
+  }
 }

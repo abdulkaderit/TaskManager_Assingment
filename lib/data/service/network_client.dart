@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:logger/logger.dart';
+import 'package:task_liveclass/app.dart';
+import 'package:task_liveclass/ui/controllers/auth_controller.dart';
 
 class NetworkResponse {
   final bool isSuccess;
@@ -47,68 +50,59 @@ class NetworkClient {
   //   }
   // }
 
+
   static Future<NetworkResponse> getRequest({required String url}) async {
     try {
       Uri uri = Uri.parse(url);
-      _preRequestLog(url);
-      Response response = await get(uri);
+      Map<String, String> headers = {
+        'token': AuthController.token ?? '',
+      };
+      _preRequestLog(url, headers);
+      Response response = await get(uri, headers: headers);
       _postRequestLog(url, response.statusCode,
-          headers: response.headers,
-          responseBody: response.body);
-
+          headers: response.headers, responseBody: response.body);
       if (response.statusCode == 200) {
-        if (response.headers['content-type']?.contains('application/json') ?? false) {
-          final decodedJson = jsonDecode(response.body);
-          return NetworkResponse(
+        final decodedJson = jsonDecode(response.body);
+        return NetworkResponse(
             isSuccess: true,
             statusCode: response.statusCode,
-            data: decodedJson,
-          );
-        } else {
-          return NetworkResponse(
+            data: decodedJson);
+      } else if (response.statusCode == 401) {
+        _moveToLoginScreen();
+        return NetworkResponse(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: 'Invalid response format (expected JSON)',
-          );
-        }
+            errorMessage: 'Un-authorize user. Please login again.'
+        );
       } else {
-        // Handle error JSON safely or fallback
-        try {
-          final decodedJson = jsonDecode(response.body);
-          String errorMessage = decodedJson['data'] ?? 'Something went wrong';
-          return NetworkResponse(
+        final decodedJson = jsonDecode(response.body);
+        String errorMessage = decodedJson['data'] ?? 'Something went wrong';
+        return NetworkResponse(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: errorMessage,
-          );
-        } catch (e) {
-          return NetworkResponse(
-            isSuccess: false,
-            statusCode: response.statusCode,
-            errorMessage: 'Unexpected error format',
-          );
-        }
+            errorMessage: errorMessage);
       }
     } catch (e) {
-      _postRequestLog(url, -1, errorMassage: e.toString());
+      _postRequestLog(url, -1);
       return NetworkResponse(
-        isSuccess: false,
-        statusCode: -1,
-        errorMessage: e.toString(),
-      );
+          isSuccess: false, statusCode: -1, errorMessage: e.toString());
     }
   }
 
 
-  static Future<NetworkResponse> postRequest({required String url,Map<String,dynamic>? body}) async {
+  static Future<NetworkResponse> postRequest(
+      {required String url,Map<String,dynamic>? body}) async {
     try{
       Uri uri = Uri.parse(url);
-      _preRequestLog(url,body: body);
+      Map<String, String> headers = {
+        'Content-Type': 'Application/json',
+        'token': AuthController.token ?? '',
+      };
+
+      _preRequestLog(url,headers,body: body);
 
       Response response = await post(uri,
-        headers: {
-          'Content-Type': 'Application/json',
-        }, body: jsonEncode(body),
+        headers: headers, body: jsonEncode(body),
       );
       _postRequestLog(url, response.statusCode,
           headers: response.headers,
@@ -121,7 +115,14 @@ class NetworkClient {
           statusCode: response.statusCode,
           data: decodedJson,
         );
-      } else {
+      } else if (response.statusCode ==401){
+        _moveToLoginScreen();
+        return NetworkResponse(
+          isSuccess: false,
+          statusCode: response.statusCode,
+        );
+      }
+      else {
         final decodedJson = jsonDecode(response.body);
         String errorMessage = decodedJson['data']?? 'Something went wrong';
         return NetworkResponse(
@@ -134,8 +135,8 @@ class NetworkClient {
     }
   }
 
-  static void _preRequestLog(String url, {Map<String, dynamic>? body}){
-    _logger.i('URL => $url \n'
+  static void _preRequestLog(String url,Map<String,String> headers, {Map<String, dynamic>? body}){
+    _logger.i('URL => $url \n Headers: $headers'
           'Body : $body');
   }
   static void _postRequestLog(String url, int statusCode,
@@ -152,5 +153,13 @@ class NetworkClient {
           'Headers: $headers\n'
           'Response :$responseBody');
     }
+  }
+  static Future<void> _moveToLoginScreen() async {
+    await AuthController.clearUserData();
+    Navigator.pushNamedAndRemoveUntil(
+      TaskManagerApp.navigatorKey.currentContext!,
+      '/login',
+          (route) => false,
+    );
   }
 }

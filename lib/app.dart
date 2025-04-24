@@ -61,7 +61,8 @@ class TaskManagerApp extends StatelessWidget {
           titleLarge: TextStyle(fontSize: 24,fontWeight: FontWeight.w600),
         ),
       ),
-      home: const SplashScreen(),
+      // home: const SplashScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
   OutlineInputBorder _getZeroBorder(){

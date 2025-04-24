@@ -5,6 +5,7 @@ import 'package:task_liveclass/data/service/network_client.dart';
 import 'package:task_liveclass/ui/widgets/snak_bar_message.dart';
 import '../../data/utils/urls.dart';
 import '../widgets/centered_circular_progress_indicator.dart';
+import '../widgets/pop_up_message.dart';
 import '../widgets/screen_background.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -176,16 +177,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
         url: Urls.registerUrl,
         body: requestBody
     );
-    _registrationInProgress =false;
-    setState(() {});
-
-    if(response.isSuccess){
+    if (response.statusCode == 200) {
       _clearTextFields();
-      showSnackBarMessage(context, 'Uers registered successfully!');
-    }else{
-      showSnackBarMessage(context, response.errorMessage, true);
+      if (!mounted) return;
+      showPopUp(context, 'Registration Successfully');
+    } else  {
+      print('Registration fail due to invalid mail');
     }
+    _registrationInProgress = false;
+    setState(() {
+    });
   }
+
   void _clearTextFields(){
     _fistNameTEController.clear();
     _lastNameTEController.clear();
