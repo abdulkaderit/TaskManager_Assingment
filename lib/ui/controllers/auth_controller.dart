@@ -7,7 +7,7 @@ import 'package:task_liveclass/data/models/user_model.dart';
 class AuthController{
   static String? token;
   static UserModel? userInfoModel;
-  static Logger _logger = Logger();
+  static final Logger _logger = Logger();
 
   static const String _tokenKey = 'token';
   static const String _userDataKey = 'user-data';

@@ -26,7 +26,7 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget{
         child: Row(
           children: [
             CircleAvatar(
-              radius: 16,
+              radius: 22,
               backgroundImage:
               shouldShowImage(AuthController.userInfoModel?.photo)
                   ? MemoryImage(
@@ -37,6 +37,7 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget{
             const SizedBox(width: 8,),
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(AuthController.userInfoModel?.fulName ??'',
