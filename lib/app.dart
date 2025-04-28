@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:task_liveclass/ui/screens/add_new_task_screen.dart';
 import 'package:task_liveclass/ui/screens/forgot_password_email_verify_screen.dart';
 import 'package:task_liveclass/ui/screens/forgot_password_otp_verification_screen.dart';
@@ -8,6 +7,8 @@ import 'package:task_liveclass/ui/screens/register_screen.dart';
 import 'package:task_liveclass/ui/screens/reset_password_screen.dart';
 import 'package:task_liveclass/ui/screens/splash_screen.dart';
 import 'package:task_liveclass/ui/screens/update_profile_screen.dart';
+import 'package:flutter/material.dart';
+
 
 class TaskManagerApp extends StatelessWidget {
   const TaskManagerApp({super.key});

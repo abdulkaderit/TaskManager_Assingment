@@ -1,6 +1,5 @@
-
 import 'package:flutter/cupertino.dart';
-import 'package:task_liveclass/app.dart';
+import 'app.dart';
 
 void main(){
   runApp(const TaskManagerApp());
