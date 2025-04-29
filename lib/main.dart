@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'app.dart';
+import 'counter/counter.dart';
 
 void main(){
-  runApp(const TaskManagerApp());
+  runApp(const CounterApp());
 }
